@@ -4,7 +4,6 @@ return [
     'paths' => [
         app_path(),
         resource_path('views'),
-        base_path('vendor/eg-mohamed')
     ],
     'extensions' => ['php', 'blade.php'],
     'exclude_paths' => [],
@@ -21,6 +20,7 @@ return [
         'Lang::choice',
     ],
     'exclude_patterns' => [],
+    'ignore_package_keys' => true,
     'json_flags' => JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE,
     'filament' => [
         'enabled' => true,

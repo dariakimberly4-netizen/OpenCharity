@@ -586,5 +586,10 @@
     "This is a demo site. All data will be reset every 6 hours.": "هذا موقع تجريبي. سيتم إعادة تعيين جميع البيانات كل 6 ساعات.",
     "Demo Mode": "وضع العرض التجريبي",
     "This is a demo site. All data resets every 6 hours.": "هذا موقع تجريبي. يتم إعادة تعيين جميع البيانات كل 6 ساعات.",
-    "Demo Credentials": "بيانات الدخول التجريبية"
+    "Demo Credentials": "بيانات الدخول التجريبية",
+    "Download": "تحميل",
+    "Service Details": "تفاصيل الخدمة",
+    "Communication & Notes": "التواصل والملاحظات",
+    "Communication Notes": "ملاحظات التواصل",
+    "Use this field for delivery coordination, case contact notes, and any delivery remarks.": "لاستخدام هذا الحقل لتنسيق التسليم، وملاحظات التواصل مع الحالة، وأي ملاحظات تتعلق بالتسليم."
 }

@@ -47,11 +47,11 @@ class FilamentServiceProvider extends ServiceProvider
     public function boot(): void
     {
         FilamentColor::register([
-            'primary' => Color::generateV3Palette(rescue(fn() => setting('branding.primary_color', '#CB3223'),'#CB3223', report: false)),
+            'primary' => Color::generateV3Palette(rescue(fn () => setting('branding.primary_color', '#CB3223'), '#CB3223', report: false)),
         ]);
+
         PhoneInput::configureUsing(fn (PhoneInput $phoneInput) => $phoneInput->initialCountry(function () {
             return rescue(fn () => Http::get('https://ipinfo.io/'.request()->ip().'/json')->json('country'), app()->getLocale(), report: false) ?? 'eg';
-
         }));
         TranslatableTabs::configureUsing(function (TranslatableTabs $component) {
 

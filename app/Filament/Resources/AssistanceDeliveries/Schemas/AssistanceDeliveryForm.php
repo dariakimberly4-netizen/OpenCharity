@@ -55,10 +55,11 @@ class AssistanceDeliveryForm
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
-                Section::make(__('Notes'))
+                Section::make(__('Communication & Notes'))
                     ->schema([
                         Textarea::make('notes')
-                            ->label(__('Notes'))
+                            ->label(__('Communication Notes'))
+                            ->helperText(__('Use this field for delivery coordination, case contact notes, and any delivery remarks.'))
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),

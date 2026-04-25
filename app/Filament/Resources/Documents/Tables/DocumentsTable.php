@@ -6,8 +6,10 @@ use App\Enums\DocumentCategory;
 use App\Enums\DocumentType;
 use App\Enums\DocumentVisibility;
 use App\Filament\Exports\DocumentExporter;
+use App\Models\Document;
 use App\Models\Family;
 use App\Models\FamilyMember;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -17,10 +19,12 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentsTable
 {
@@ -84,7 +88,16 @@ class DocumentsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->filtersFormColumns(6)
             ->filters([
+                SelectFilter::make('type')
+                    ->options(DocumentType::class)
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('category')
+                    ->options(DocumentType::class)
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('family_id')
                     ->label(__('Family'))
                     ->options(fn (): array => Family::query()->pluck('name', 'id')->all())
@@ -119,6 +132,7 @@ class DocumentsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                self::downloadAction(),
                 ViewAction::make(),
                 EditAction::make(),
             ])
@@ -134,5 +148,16 @@ class DocumentsTable
                     RestoreBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function downloadAction(): Action
+    {
+        return Action::make('download')
+            ->button()
+            ->label(__('Download'))
+            ->icon('heroicon-o-arrow-down-tray')
+            ->url(fn (Document $record): ?string => filled($record->file_path) ? Storage::url($record->file_path) : null)
+            ->openUrlInNewTab()
+            ->visible(fn (Document $record): bool => filled($record->file_path));
     }
 }

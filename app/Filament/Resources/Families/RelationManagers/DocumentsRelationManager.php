@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 class DocumentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'documents';
+
     protected static ?string $title = 'Documents';
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
@@ -27,16 +28,19 @@ class DocumentsRelationManager extends RelationManager
     {
         return __(self::$title);
     }
+
     public function form(Schema $schema): Schema
     {
         return DocumentForm::configure($schema);
     }
+
     public function table(Table $table): Table
     {
         return DocumentsTable::configure($table)
 
             ->modelLabel(__('Document'))
             ->recordActions([
+                DocumentsTable::downloadAction(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

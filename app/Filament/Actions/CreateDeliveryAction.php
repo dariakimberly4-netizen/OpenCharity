@@ -26,7 +26,7 @@ class CreateDeliveryAction
             ->button()
             ->slideOver()
             ->modalWidth(Width::ScreenExtraLarge)
-            ->visible(fn(AssistanceSchedule $record): bool => in_array($record->status,[ScheduleStatus::Scheduled,ScheduleStatus::Approved]))
+            ->visible(fn (AssistanceSchedule $record): bool => in_array($record->status, [ScheduleStatus::Scheduled, ScheduleStatus::Approved]))
             ->schema([
                 Section::make(__('Delivery Info'))
                     ->columns(2)
@@ -56,10 +56,11 @@ class CreateDeliveryAction
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
-                Section::make(__('Notes'))
+                Section::make(__('Communication & Notes'))
                     ->schema([
                         Textarea::make('notes')
-                            ->label(__('Notes'))
+                            ->label(__('Communication Notes'))
+                            ->helperText(__('Use this field for delivery coordination, case contact notes, and any delivery remarks.'))
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),

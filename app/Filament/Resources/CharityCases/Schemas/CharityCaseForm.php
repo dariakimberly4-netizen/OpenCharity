@@ -6,7 +6,6 @@ use App\Enums\CasePriority;
 use App\Enums\CaseStatus;
 use App\Enums\VisitStatusCase;
 use App\Filament\Resources\Families\RelationManagers\CharityCasesRelationManager;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -66,10 +65,11 @@ class CharityCaseForm
                             ->inline()
                             ->required(),
                     ]),
-                Section::make(__('Description'))
+                Section::make(__('Service Details'))
                     ->schema([
                         Textarea::make('description')
-                            ->label(__('Description'))
+                            ->hiddenLabel()
+                            ->label(__('Service Details'))
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
