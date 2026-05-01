@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use MohamedSaid\Referenceable\Traits\HasReference;
 
 class FamilyMember extends Model
 {
@@ -22,7 +24,7 @@ class FamilyMember extends Model
     use HasFactory;
 
     use SoftDeletes;
-
+    use HasReference;
     protected function casts(): array
     {
         return [
@@ -36,6 +38,17 @@ class FamilyMember extends Model
             'monthly_income' => 'decimal:2',
             'is_refugee' => 'boolean',
         ];
+    }
+    protected string $referenceColumn = 'code';
+    protected $referenceStrategy = 'sequential';
+    protected $referenceSequential = [
+        'start' => 1,
+        'min_digits' => 4,
+        'reset_frequency' => 'never',
+    ];
+    public function getReferencePrefix(): string
+    {
+        return 'M-' . explode('-', $this->family->code)[1];
     }
 
     public function family(): BelongsTo

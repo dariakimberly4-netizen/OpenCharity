@@ -31,4 +31,9 @@ class AssistanceDelivery extends Model
     {
         return $this->belongsTo(AssistanceSchedule::class);
     }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 }

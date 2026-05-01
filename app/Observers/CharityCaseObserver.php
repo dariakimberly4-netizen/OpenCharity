@@ -20,7 +20,7 @@ class CharityCaseObserver
 
         $status = $charityCase->status;
 
-        if (in_array($status, [CaseStatus::PendingReview, CaseStatus::NeedMoreInfo]) && $charityCase->reviewed_at === null) {
+        if (in_array($status, [CaseStatus::PendingReview]) && $charityCase->reviewed_at === null) {
             $charityCase->reviewed_at = now();
         }
 
@@ -28,7 +28,7 @@ class CharityCaseObserver
             $charityCase->approved_at = now();
         }
 
-        if (in_array($status, [CaseStatus::Closed, CaseStatus::Canceled, CaseStatus::Rejected, CaseStatus::Completed]) && $charityCase->closed_at === null) {
+        if (in_array($status, [CaseStatus::Completed]) && $charityCase->closed_at === null) {
             $charityCase->closed_at = now();
         }
     }

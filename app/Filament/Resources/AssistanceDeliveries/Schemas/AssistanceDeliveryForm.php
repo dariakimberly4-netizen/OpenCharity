@@ -4,12 +4,15 @@ namespace App\Filament\Resources\AssistanceDeliveries\Schemas;
 
 use App\Enums\DeliveryStatus;
 use App\Filament\Resources\AssistanceSchedules\RelationManagers\AssistanceDeliveriesRelationManager;
+use App\Models\AssistanceSchedule;
+use App\Models\Supplier;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -38,6 +41,33 @@ class AssistanceDeliveryForm
                             ->searchable()
                             ->preload()
                             ->required(),
+                        Select::make('supplier_id')
+                            ->label(__('Supplier'))
+                            ->relationship('supplier', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->options(function (Get $get, ?object $livewire = null): array {
+                                $scheduleId = $get('assistance_schedule_id')
+                                    ?? ($livewire instanceof AssistanceDeliveriesRelationManager
+                                        ? $livewire->getOwnerRecord()->getKey()
+                                        : null);
+
+                                if (! $scheduleId) {
+                                    return Supplier::query()->pluck('name', 'id')->all();
+                                }
+
+                                $typeId = AssistanceSchedule::find($scheduleId)?->assistance_type_id;
+
+                                if (! $typeId) {
+                                    return Supplier::query()->pluck('name', 'id')->all();
+                                }
+
+                                return Supplier::query()
+                                    ->whereHas('assistanceTypes', fn ($q) => $q->where('assistance_types.id', $typeId))
+                                    ->pluck('name', 'id')
+                                    ->all();
+                            })
+                            ->nullable(),
                     ]),
                 Section::make(__('Receiver'))
                     ->columns(2)

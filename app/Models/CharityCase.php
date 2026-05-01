@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use MohamedSaid\Referenceable\Traits\HasReference;
 
@@ -29,37 +30,25 @@ class CharityCase extends Model
     protected string $referenceColumn = 'code';
     protected $referenceStrategy = 'sequential';
     protected $referenceSequential = [
-        'start'           => 1,
-        'min_digits'      => 4,   // no zero-padding, gives: 1, 2, 3 ...
+        'start' => 1,
+        'min_digits' => 4,
         'reset_frequency' => 'never',
     ];
-    public function getReferencePrefix(): string
-    {
-        return 'C-' . explode('-',$this->family->code)[1];
-    }
-
     protected $appends = ['full_identifier'];
 
-    protected function casts(): array
+    public function getReferencePrefix(): string
     {
-        return [
-            'priority' => CasePriority::class,
-            'status' => CaseStatus::class,
-            'visit_status' => VisitStatusCase::class,
-            'registered_at' => 'datetime',
-            'reviewed_at' => 'datetime',
-            'approved_at' => 'datetime',
-            'closed_at' => 'datetime',
-            'last_visit_at' => 'datetime',
-            'next_visit_at' => 'datetime',
-            'requested_amount' => 'decimal:2',
-            'approved_amount' => 'decimal:2',
-        ];
+        return 'C-' . explode('-', $this->family->code)[1] . '-' . explode('-', $this->familyMember->code)[1];
+    }
+
+    public function visit(): HasOne
+    {
+        return $this->hasOne(Visit::class)->latestOfMany();
     }
 
     public function fullIdentifier(): Attribute
     {
-        return Attribute::get(fn () => "({$this->code}) - {$this->familyMember->name}");
+        return Attribute::get(fn() => "({$this->code}) - {$this->familyMember->name}");
     }
 
     public function family(): BelongsTo
@@ -75,11 +64,6 @@ class CharityCase extends Model
     public function caseType(): BelongsTo
     {
         return $this->belongsTo(CaseType::class);
-    }
-
-    public function visits(): HasMany
-    {
-        return $this->hasMany(Visit::class);
     }
 
     public function documents(): HasMany
@@ -111,5 +95,27 @@ class CharityCase extends Model
             ->min('scheduled_at');
 
         $this->saveQuietly();
+    }
+
+    public function visits(): HasMany
+    {
+        return $this->hasMany(Visit::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'priority' => CasePriority::class,
+            'status' => CaseStatus::class,
+            'visit_status' => VisitStatusCase::class,
+            'registered_at' => 'datetime',
+            'reviewed_at' => 'datetime',
+            'approved_at' => 'datetime',
+            'closed_at' => 'datetime',
+            'last_visit_at' => 'datetime',
+            'next_visit_at' => 'datetime',
+            'requested_amount' => 'decimal:2',
+            'approved_amount' => 'decimal:2',
+        ];
     }
 }

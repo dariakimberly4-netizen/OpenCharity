@@ -5,12 +5,17 @@ namespace App\Filament\Resources\CharityCases\Schemas;
 use App\Enums\CasePriority;
 use App\Enums\CaseStatus;
 use App\Enums\VisitStatusCase;
+use App\Enums\VisitType;
 use App\Filament\Resources\Families\RelationManagers\CharityCasesRelationManager;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -33,7 +38,7 @@ class CharityCaseForm
                             ->required(),
                         Select::make('family_member_id')
                             ->label(__('Family Member'))
-                            ->relationship('familyMember', 'name', fn ($query, Get $get) => $query->where('family_id', $get('family_id')))
+                            ->relationship('familyMember', 'name', fn($query, Get $get) => $query->where('family_id', $get('family_id')))
                             ->searchable()
                             ->preload()
                             ->required(),
@@ -84,7 +89,6 @@ class CharityCaseForm
                             ->default(0.0),
                         TextInput::make('approved_amount')
                             ->label(__('Approved Amount'))
-                            ->required()
                             ->numeric()
                             ->currency()
                             ->default(0.0),
@@ -117,6 +121,40 @@ class CharityCaseForm
                         Textarea::make('notes')
                             ->label(__('Notes'))
                             ->columnSpanFull(),
+                    ])
+                    ->columnSpanFull(),
+                Section::make(__('Visit'))
+                    ->hiddenOn('edit')
+                    ->columns(2)
+                    ->schema([
+                        ToggleButtons::make('schedule_visit')
+                            ->label(__('Also schedule a visit?'))
+                            ->live()
+                            ->boolean()
+                            ->inline()
+                            ->dehydrated(false)
+                            ->columnSpanFull(),
+
+                        Fieldset::make(__('Visit Details'))
+                            ->relationship('visit')
+                            ->visible(fn (Get $get) => $get('schedule_visit') === true)
+                            ->columns(2)
+                            ->schema([
+                                Select::make('visit_type')
+                                    ->label(__('Visit Type'))
+                                    ->options(VisitType::class)
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+
+                                DateTimePicker::make('scheduled_at')
+                                    ->label(__('Scheduled At'))
+                                    ->required(),
+
+                                Textarea::make('notes')
+                                    ->label(__('Notes'))
+                                    ->columnSpanFull(),
+                            ])->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
             ]);

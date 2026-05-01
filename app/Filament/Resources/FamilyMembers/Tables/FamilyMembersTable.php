@@ -18,9 +18,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -35,6 +33,12 @@ class FamilyMembersTable
     {
         return $table
             ->columns([
+                TextColumn::make('code')
+                    ->label(__('Code'))
+                    ->searchable()
+                    ->copyable()
+                    ->badge()
+                    ->color('gray'),
                 TextColumn::make('family.name')
                     ->label(__('Family'))
                     ->hiddenOn(FamilyMembersRelationManager::class)

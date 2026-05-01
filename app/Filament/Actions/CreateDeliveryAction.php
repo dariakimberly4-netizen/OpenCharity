@@ -6,6 +6,7 @@ use App\Enums\DeliveryStatus;
 use App\Enums\ScheduleStatus;
 use App\Models\AssistanceDelivery;
 use App\Models\AssistanceSchedule;
+use App\Models\Supplier;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -39,6 +40,14 @@ class CreateDeliveryAction
                             ->searchable()
                             ->preload()
                             ->required(),
+                        Select::make('supplier_id')
+                            ->label(__('Supplier'))
+                            ->nullable()
+                            ->searchable()
+                            ->options(fn (AssistanceSchedule $record): array => Supplier::query()
+                                ->whereHas('assistanceTypes', fn ($q) => $q->where('assistance_types.id', $record->assistance_type_id))
+                                ->pluck('name', 'id')
+                                ->all()),
                     ]),
                 Section::make(__('Receiver'))
                     ->columns(2)

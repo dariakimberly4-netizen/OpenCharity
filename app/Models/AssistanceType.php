@@ -6,6 +6,7 @@ use App\Enums\AssistanceUnitType;
 use Database\Factories\AssistanceTypeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MohamedSaid\Referenceable\Traits\HasReference;
 
@@ -34,5 +35,10 @@ class AssistanceType extends Model
     public function assistanceSchedules(): HasMany
     {
         return $this->hasMany(AssistanceSchedule::class);
+    }
+
+    public function suppliers(): BelongsToMany
+    {
+        return $this->belongsToMany(Supplier::class);
     }
 }

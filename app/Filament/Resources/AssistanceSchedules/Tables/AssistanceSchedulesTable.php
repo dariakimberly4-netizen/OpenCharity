@@ -5,6 +5,7 @@ namespace App\Filament\Resources\AssistanceSchedules\Tables;
 use App\Enums\FundingStatus;
 use App\Enums\ScheduleFrequency;
 use App\Enums\ScheduleStatus;
+use App\Filament\Actions\AddNoteAction;
 use App\Filament\Actions\CreateDeliveryAction;
 use App\Filament\Exports\AssistanceScheduleExporter;
 use App\Models\AssistanceSchedule;
@@ -14,7 +15,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -172,6 +172,7 @@ class AssistanceSchedulesTable
             ])
             ->recordActions([
                 CreateDeliveryAction::make(),
+                AddNoteAction::make(),
                 ViewAction::make(),
                 EditAction::make(),
             ])

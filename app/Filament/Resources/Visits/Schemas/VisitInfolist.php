@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Visits\Schemas;
 
+use App\Models\Visit;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -62,6 +64,39 @@ class VisitInfolist
                             ->placeholder('-')
                             ->columnSpanFull(),
                     ]),
+                Section::make(__('Incomes'))
+                    ->schema([
+                        RepeatableEntry::make('visitIncomes')
+                            ->label(__('Incomes'))
+                            ->schema([
+                                TextEntry::make('description')->label(__('Description')),
+                                TextEntry::make('amount')->label(__('Amount'))->currency(),
+                                TextEntry::make('notes')->label(__('Notes'))->placeholder('-'),
+                            ])
+                            ->columns(3)
+                            ->columnSpanFull(),
+                    ])
+                    ->columnSpanFull(),
+                Section::make(__('Expenses'))
+                    ->schema([
+                        RepeatableEntry::make('visitExpenses')
+                            ->label(__('Expenses'))
+                            ->schema([
+                                TextEntry::make('description')->label(__('Description')),
+                                TextEntry::make('amount')->label(__('Amount'))->currency(),
+                                TextEntry::make('notes')->label(__('Notes'))->placeholder('-'),
+                            ])
+                            ->columns(3)
+                            ->columnSpanFull(),
+                    ])
+                    ->columnSpanFull(),
+                Section::make(__('Net Total'))
+                    ->schema([
+                        TextEntry::make('net_amount')
+                            ->label(__('Net Total'))
+                            ->state(fn (Visit $record): string => number_format((float) $record->net_amount, 2).' EGP'),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 }
