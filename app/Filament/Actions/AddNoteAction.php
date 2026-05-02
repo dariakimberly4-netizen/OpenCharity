@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
+use Filament\Support\Colors\Color;
 
 class AddNoteAction
 {
@@ -15,16 +16,14 @@ class AddNoteAction
         return Action::make('addNote')
             ->label(__('Add Note'))
             ->icon('heroicon-o-chat-bubble-left-ellipsis')
-            ->slideOver()
+            ->color(Color::Purple)
+            ->requiresConfirmation()
+            ->button()
             ->schema([
-                Section::make(__('Note'))
-                    ->schema([
-                        Textarea::make('note')
-                            ->label(__('Note'))
-                            ->required()
-                            ->rows(4)
-                            ->columnSpanFull(),
-                    ])
+                Textarea::make('note')
+                    ->label(__('Note'))
+                    ->required()
+                    ->rows(4)
                     ->columnSpanFull(),
             ])
             ->action(function (array $data, AssistanceSchedule $record): void {

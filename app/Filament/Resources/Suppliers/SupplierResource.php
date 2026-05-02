@@ -37,6 +37,11 @@ class SupplierResource extends Resource
         return __('Suppliers');
     }
 
+    public static function getNavigationGroup(): string|\UnitEnum|null
+    {
+        return __('Settings');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return SupplierForm::configure($schema);

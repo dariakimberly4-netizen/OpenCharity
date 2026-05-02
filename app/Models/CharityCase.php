@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use MohamedSaid\Referenceable\Traits\HasReference;
+use Illuminate\Support\Facades\DB;
 
 #[ObservedBy(CharityCaseObserver::class)]
 class CharityCase extends Model
@@ -24,31 +24,41 @@ class CharityCase extends Model
     /** @use HasFactory<CharityCaseFactory> */
     use HasFactory;
 
-    use HasReference;
     use SoftDeletes;
 
-    protected string $referenceColumn = 'code';
-    protected $referenceStrategy = 'sequential';
-    protected $referenceSequential = [
-        'start' => 1,
-        'min_digits' => 4,
-        'reset_frequency' => 'never',
-    ];
     protected $appends = ['full_identifier'];
 
-    public function getReferencePrefix(): string
+    protected static function booted(): void
     {
-        return 'C-' . explode('-', $this->family->code)[1] . '-' . explode('-', $this->familyMember->code)[1];
+        static::creating(function (self $case): void {
+            if ($case->code) {
+                return;
+            }
+
+            DB::transaction(function () use ($case): void {
+                $member = FamilyMember::lockForUpdate()->find($case->family_member_id);
+                $family = Family::find($case->family_id);
+
+                $familySeq = explode('-', $family->code)[1];
+                $memberSeq = explode('-', $member->code)[2];
+
+                $next = self::withTrashed()
+                    ->where('family_member_id', $case->family_member_id)
+                    ->count() + 1;
+
+                $case->code = sprintf('C-%s-%s-%04d', $familySeq, $memberSeq, $next);
+            });
+        });
+    }
+
+    public function fullIdentifier(): Attribute
+    {
+        return Attribute::get(fn () => "({$this->code}) - {$this->familyMember->name}");
     }
 
     public function visit(): HasOne
     {
         return $this->hasOne(Visit::class)->latestOfMany();
-    }
-
-    public function fullIdentifier(): Attribute
-    {
-        return Attribute::get(fn() => "({$this->code}) - {$this->familyMember->name}");
     }
 
     public function family(): BelongsTo
@@ -81,6 +91,11 @@ class CharityCase extends Model
         return $this->hasMany(DonationTarget::class);
     }
 
+    public function visits(): HasMany
+    {
+        return $this->hasMany(Visit::class);
+    }
+
     public function syncVisitDates(): void
     {
         $this->last_visit_at = $this->visits()
@@ -95,11 +110,6 @@ class CharityCase extends Model
             ->min('scheduled_at');
 
         $this->saveQuietly();
-    }
-
-    public function visits(): HasMany
-    {
-        return $this->hasMany(Visit::class);
     }
 
     protected function casts(): array

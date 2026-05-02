@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use SalemAljebaly\FilamentMapPicker\MapPicker;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class SupplierForm
 {
@@ -39,9 +40,8 @@ class SupplierForm
                         Repeater::make('phones')
                             ->label(__('Phones'))
                             ->simple(
-                                TextInput::make('number')
+                                PhoneInput::make('number')
                                     ->label(__('Phone Number'))
-                                    ->tel()
                                     ->required()
                             )
                             ->defaultItems(1)

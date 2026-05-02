@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-use MohamedSaid\Referenceable\Traits\HasReference;
 
 class FamilyMember extends Model
 {
@@ -24,7 +23,23 @@ class FamilyMember extends Model
     use HasFactory;
 
     use SoftDeletes;
-    use HasReference;
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $member): void {
+            if ($member->code) {
+                return;
+            }
+
+            DB::transaction(function () use ($member): void {
+                $family = Family::lockForUpdate()->find($member->family_id);
+                $familySeq = explode('-', $family->code)[1];
+                $next = self::withTrashed()->where('family_id', $member->family_id)->count() + 1;
+                $member->code = sprintf('M-%s-%04d', $familySeq, $next);
+            });
+        });
+    }
+
     protected function casts(): array
     {
         return [
@@ -38,17 +53,6 @@ class FamilyMember extends Model
             'monthly_income' => 'decimal:2',
             'is_refugee' => 'boolean',
         ];
-    }
-    protected string $referenceColumn = 'code';
-    protected $referenceStrategy = 'sequential';
-    protected $referenceSequential = [
-        'start' => 1,
-        'min_digits' => 4,
-        'reset_frequency' => 'never',
-    ];
-    public function getReferencePrefix(): string
-    {
-        return 'M-' . explode('-', $this->family->code)[1];
     }
 
     public function family(): BelongsTo

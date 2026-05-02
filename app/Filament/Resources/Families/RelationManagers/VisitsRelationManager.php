@@ -15,6 +15,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Size;
+use Filament\Support\Enums\SlideOverPosition;
 use Filament\Support\Enums\Width;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -45,13 +47,13 @@ class VisitsRelationManager extends RelationManager
         return VisitsTable::configure($table)
             ->modelLabel(__('Visit'))
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()->slideOver()->modalWidth(Width::Full),
                 DeleteAction::make(),
             ])
             ->headerActions([
                 CreateAction::make()
                     ->slideOver()
-                    ->modalWidth(Width::ScreenExtraLarge),
+                    ->modalWidth(Width::Full),
             ]);
     }
 }

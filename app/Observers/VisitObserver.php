@@ -14,6 +14,9 @@ class VisitObserver
         if (!$visit->status) {
             $visit->status = VisitStatus::Scheduled;
         }
+        if ($visit->scheduled_at and !$visit->visited_at) {
+            $visit->visited_at = $visit->scheduled_at;
+        }
     }
     public function saved(Visit $visit): void
     {

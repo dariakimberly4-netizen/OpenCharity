@@ -4,13 +4,17 @@ namespace App\Filament\Resources\Suppliers\Tables;
 
 use App\Models\Supplier;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\Tables\PhoneColumn;
 
 class SuppliersTable
 {
@@ -22,9 +26,9 @@ class SuppliersTable
                     ->label(__('Name'))
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('phones')
+                PhoneColumn::make('phones')
                     ->label(__('Phones'))
-                    ->state(fn (Supplier $record): string => collect($record->phones ?? [])->implode(', '))
+                    ->badge()->copyable()
                     ->searchable(false),
                 TextColumn::make('assistanceTypes.name')
                     ->label(__('Assistance Types'))
@@ -44,7 +48,9 @@ class SuppliersTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

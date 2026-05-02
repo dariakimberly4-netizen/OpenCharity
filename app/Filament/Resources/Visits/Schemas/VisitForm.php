@@ -12,6 +12,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -78,70 +79,72 @@ class VisitForm
                             ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
-                Section::make(__('Incomes'))
-                    ->schema([
-                        Repeater::make('visitIncomes')
-                            ->relationship()
-                            ->label(__('Incomes'))
-                            ->schema([
-                                TextInput::make('description')
-                                    ->label(__('Description'))
-                                    ->required()
-                                    ->columnSpan(2),
-                                TextInput::make('amount')
-                                    ->label(__('Amount'))
-                                    ->numeric()
-                                    ->required()
-                                    ->prefix('EGP')
-                                    ->columnSpan(1),
-                                Textarea::make('notes')
-                                    ->label(__('Notes'))
-                                    ->columnSpanFull(),
-                            ])
-                            ->columns(3)
-                            ->live()
-                            ->defaultItems(0)
-                            ->columnSpanFull(),
-                    ])
-                    ->columnSpanFull(),
-                Section::make(__('Expenses'))
-                    ->schema([
-                        Repeater::make('visitExpenses')
-                            ->relationship()
-                            ->label(__('Expenses'))
-                            ->schema([
-                                TextInput::make('description')
-                                    ->label(__('Description'))
-                                    ->required()
-                                    ->columnSpan(2),
-                                TextInput::make('amount')
-                                    ->label(__('Amount'))
-                                    ->numeric()
-                                    ->required()
-                                    ->prefix('EGP')
-                                    ->columnSpan(1),
-                                Textarea::make('notes')
-                                    ->label(__('Notes'))
-                                    ->columnSpanFull(),
-                            ])
-                            ->columns(3)
-                            ->live()
-                            ->defaultItems(0)
-                            ->columnSpanFull(),
-                    ])
-                    ->columnSpanFull(),
-                Section::make(__('Net Total'))
-                    ->schema([
-                        Placeholder::make('net_amount')
-                            ->label(__('Net Total'))
-                            ->content(function (Get $get): string {
-                                $income = collect($get('visitIncomes') ?? [])->sum('amount');
-                                $expense = collect($get('visitExpenses') ?? [])->sum('amount');
+                Grid::make(2)->columnSpanFull()->schema([
+                    Section::make(__('Incomes'))
+                        ->columnSpan(1)
+                        ->schema([
+                            Repeater::make('visitIncomes')
+                                ->relationship()
+                                ->hiddenLabel()
+                                ->table([
+                                    Repeater\TableColumn::make(__('Title')),
+                                    Repeater\TableColumn::make(__('Amount')),
+                                ])
+                                ->schema([
+                                    TextInput::make('description')
+                                        ->label(__('Description'))
+                                        ->required()
+                                        ->columnSpan(2),
+                                    TextInput::make('amount')
+                                        ->label(__('Amount'))
+                                        ->numeric()
+                                        ->required()
+                                        ->currency()
+                                        ->columnSpan(1)
+                                ])
+                                ->columns(3)
+                                ->live()
+                                ->defaultItems(0)
+                                ->columnSpanFull(),
+                        ]),
+                    Section::make(__('Expenses'))
+                        ->columnSpan(1)
+                        ->schema([
+                            Repeater::make('visitExpenses')
+                                ->relationship()
+                                ->hiddenLabel()
+                                ->label(__('Expenses'))
+                                ->table([
+                                    Repeater\TableColumn::make(__('Title')),
+                                    Repeater\TableColumn::make(__('Amount')),
+                                ])
+                                ->schema([
+                                    TextInput::make('description')
+                                        ->label(__('Description'))
+                                        ->required()
+                                        ->columnSpan(2),
+                                    TextInput::make('amount')
+                                        ->label(__('Amount'))
+                                        ->numeric()
+                                        ->required()
+                                        ->currency()
+                                        ->columnSpan(1)
+                                ])
+                                ->live()
+                                ->defaultItems(0),
+                        ]),
+                    Section::make(__('Net Total'))
+                        ->schema([
+                            Placeholder::make('net_amount')
+                                ->label(__('Net Total'))
+                                ->content(function (Get $get): string {
+                                    $income = collect($get('visitIncomes') ?? [])->sum('amount');
+                                    $expense = collect($get('visitExpenses') ?? [])->sum('amount');
 
-                                return number_format((float) $income - (float) $expense, 2).' EGP';
-                            }),
-                    ])
-                    ->columnSpanFull(),
+                                    return number_format((float) $income - (float) $expense, 2).' EGP';
+                                }),
+                        ]),
+                ])
             ]);
     }
 }

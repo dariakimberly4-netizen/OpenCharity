@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AssistanceSchedules\Pages;
 
+use App\Filament\Actions\AddNoteAction;
 use App\Filament\Actions\CreateDeliveryAction;
 use App\Filament\Resources\AssistanceSchedules\AssistanceScheduleResource;
 use Filament\Actions\DeleteAction;
@@ -17,6 +18,7 @@ class EditAssistanceSchedule extends EditRecord
     {
         return [
             CreateDeliveryAction::make(),
+            AddNoteAction::make(),
         ];
     }
 }
