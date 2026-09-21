@@ -9,7 +9,11 @@ use App\Http\Controllers\Reports\FamilyMemberReportController;
 use App\Http\Controllers\Reports\FamilyReportController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', LandingController::class)->name('home');
+Route::get('/', function () {
+    return redirect('/admin/login');
+})->name('home');
+
+Route::get('/public-home', LandingController::class)->name('public-home');
 Route::get('/donation-cases', DonationCasesController::class)->name('donation-cases');
 Route::get('/donation-cases/{donationTarget}', DonationTargetController::class)->name('donation-target');
 Route::match(['GET', 'POST'], '/payments/paymob/callback', PaymentCallbackController::class)->name('payments.paymob.callback');
