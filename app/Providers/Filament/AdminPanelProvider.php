@@ -43,6 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->topbar(false)
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
+                NavigationGroup::make('Government Payout Workflow')->label(__('Government Payout Workflow')),
                 NavigationGroup::make('Assistance')->label(__('Assistance')),
                 NavigationGroup::make('Families')->label(__('Families')),
                 NavigationGroup::make('Cases')->label(__('Cases')),
